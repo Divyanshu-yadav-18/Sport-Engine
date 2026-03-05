@@ -25,16 +25,20 @@ export function attachWebSocketServer(server){
         const decision = await wsArcjet.protect(req);
 
         if(decision.isDenied()){
-          const code = decision.reason.isRateLimit() ? 1013 : 1008;
-          const reason = decision.reason.isRateLimit()? 'Rate Limit exceeded': 'Access denied';
+         if(decision.reason.isRateLimit()){
+            socket.write('HTTP/1.1 429 Too Many Request\r\n\r\n');
+          } else{
+            socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
+          }
 
-          socket.close(code, reason);
+          socket.destroy();
           return;
         }
       }
       catch(e){
         console.error('WS connection error', e);
         socket.close(1011, 'Server security error');
+        socket.destroy();
         return;
       }
     }
