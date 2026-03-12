@@ -5,9 +5,14 @@ import { commentary } from "../db/schema.js";
 import { db } from "../db/db.js";
 
 
+const MAX_LIMIT = 100;
+
 export const commentaryRouter = Router({ mergeParams: true });
+
 commentaryRouter.get('/',(req,res)=>{
-  res.status(200).json({ message: 'Commentary List'});
+  const paramsResult = matchIdParamSchema.safeParse(req.params);
+
+  
 });
 
 commentaryRouter.post('/', async (req, res)=>{
