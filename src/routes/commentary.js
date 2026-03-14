@@ -55,12 +55,16 @@ commentaryRouter.post('/', async (req, res)=>{
   }
 
   try{
-    const {minutes, ...rest } = bodyResult.data;
+    const {minute, ...rest } = bodyResult.data;
     const [result] = await db.insert(commentary).values({
       matchId:paramsResult.data.id,
-      minutes,
+      minute,
       ...rest
     }).returning();
+    
+    if(res.app.locals.broadcastCommentary){
+      res.app.locals.broadcastCommentary(result.matchId, result); 
+    }
 
     res.status(201).json({data: result});
     
